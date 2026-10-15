@@ -1,6 +1,6 @@
 # Firme email FASHION.INC
 
-Pagina di installazione: https://vecienzg.github.io/firme-fashioninc/
+Pagina di installazione: https://firme-fashioninc.vercel.app/
 
 ## Modificare una firma
 1. Modifica `config.json` (nomi, ruoli, numeri, email, link social).
