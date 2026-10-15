@@ -1,0 +1,23 @@
+{
+  "base_url": "https://vecienzg.github.io/firme-fashioninc",
+  "company": {
+    "name": "FASHION.INC SRLS",
+    "piva": "07972151216",
+    "address": "Via Trieste, 196, 80036 Palma Campania (NA)",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=Via+Trieste+196+80036+Palma+Campania+NA",
+    "phone": "081 843 3866",
+    "website": "https://www.fashioninc.it"
+  },
+  "social": {
+    "linkedin": "",
+    "instagram": "",
+    "facebook": "",
+    "tiktok": ""
+  },
+  "people": [
+    { "slug": "joseph-leone",       "name": "Joseph Leone",       "role": "Founder",                         "mobile": "334 590 4749", "email": "joseph.leone@fashioninc.it" },
+    { "slug": "paola-cristiano",    "name": "Paola Cristiano",    "role": "Chief Of Office Administrations", "mobile": "338 457 0143", "email": "paola@fashioninc.it" },
+    { "slug": "michele-santorelli", "name": "Michele Santorelli", "role": "Production Office",               "mobile": "334 360 5246", "email": "ufficioproduzione@fashioninc.it" },
+    { "slug": "carmine-annunziata", "name": "Carmine Annunziata", "role": "Administrative Office",           "mobile": "",             "email": "amministrazione@fashioninc.it" }
+  ]
+}
