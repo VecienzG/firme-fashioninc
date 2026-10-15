@@ -159,26 +159,35 @@
 <script>
   const SIGS = /*__DATA__*/[];
 
-  // Copia da un iframe vuoto: così il browser non trascina negli appunti gli stili di questa pagina.
-  function copyIsolated(html) {
-    const frame = document.createElement('iframe');
-    frame.setAttribute('aria-hidden', 'true');
-    frame.style.cssText = 'position:fixed;left:-9999px;top:0;width:700px;height:400px;border:0;';
-    document.body.appendChild(frame);
-    const doc = frame.contentDocument;
-    doc.open(); doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0">' + html + '</body></html>'); doc.close();
-    const range = doc.createRange();
-    range.selectNodeContents(doc.body);
-    const sel = frame.contentWindow.getSelection();
+  // Scrive negli appunti esattamente questo HTML: intercettando l'evento "copy" il browser
+  // non aggiunge gli stili di questa pagina (cosa che succede copiando una selezione).
+  function copyExact(html, text) {
+    const holder = document.createElement('span');
+    holder.textContent = text || ' ';
+    holder.style.cssText = 'position:fixed;left:-9999px;top:0;white-space:pre;';
+    document.body.appendChild(holder);
+    const range = document.createRange();
+    range.selectNodeContents(holder);
+    const sel = window.getSelection();
     sel.removeAllRanges(); sel.addRange(range);
+    let wrote = false;
+    const onCopy = e => {
+      if (!e.clipboardData) return;
+      if (html) e.clipboardData.setData('text/html', html);
+      e.clipboardData.setData('text/plain', text);
+      e.preventDefault();
+      wrote = true;
+    };
+    document.addEventListener('copy', onCopy, true);
     let ok = false;
-    try { ok = doc.execCommand('copy'); } catch (e) {}
-    sel.removeAllRanges(); frame.remove();
-    return ok;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.removeEventListener('copy', onCopy, true);
+    sel.removeAllRanges(); holder.remove();
+    return ok && wrote;
   }
 
   async function copyRich(html, text) {
-    if (copyIsolated(html)) return true;
+    if (copyExact(html, text)) return true;
     try {
       if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
         await navigator.clipboard.write([new ClipboardItem({
@@ -187,29 +196,14 @@
         })]);
         return true;
       }
-    } catch (e) { /* passa al metodo alternativo */ }
-    const holder = document.createElement('div');
-    holder.contentEditable = 'true';
-    holder.style.cssText = 'position:fixed;left:-9999px;top:0;';
-    holder.innerHTML = html;
-    document.body.appendChild(holder);
-    const range = document.createRange();
-    range.selectNodeContents(holder);
-    const sel = window.getSelection();
-    sel.removeAllRanges(); sel.addRange(range);
-    let ok = false;
-    try { ok = document.execCommand('copy'); } catch (e) {}
-    sel.removeAllRanges(); holder.remove();
-    return ok;
+    } catch (e) {}
+    return false;
   }
 
   async function copyText(text) {
+    if (copyExact('', text)) return true;
     try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px;';
-    document.body.appendChild(ta); ta.select();
-    let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
-    ta.remove(); return ok;
+    return false;
   }
 
   function flash(btn, ok, label) {
